@@ -1,6 +1,6 @@
 package azael.josue.libreria.model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.annotations.ManyToAny;
@@ -14,13 +14,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "loan_book")  // Table name in the database
+@Table(name = "loan_book")  // Nombre de la tabla en la base de datos
 public class loanBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date loanDate;
-    private Date returnDate;
+    private java.util.Date loanDate;
+    private java.util.Date returnDate;
     private boolean returned;
     
     /* ------------------ Hay muchos préstamos para un libro ----------------- */

@@ -21,10 +21,10 @@ public class publisher {
     private boolean isActive;
 
 
-    @ManyToMany(mappedBy = "publisher") // Relación de muchos a muchos con autores
+    @ManyToMany(mappedBy = "publishers") // Relación de muchos a muchos con autores
     private List<author> authors; 
     
-    @ManyToMany(mappedBy = "publisher") // Relación de muchos a muchos con libros
+    @ManyToMany(mappedBy = "publishers") // Relación de muchos a muchos con libros
     private List<book> books;
 
     // Constructor vacío para Springboot

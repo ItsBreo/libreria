@@ -1,6 +1,7 @@
 package azael.josue.libreria.service;
 
 import azael.josue.libreria.model.author;
+import azael.josue.libreria.model.book;
 import azael.josue.libreria.repository.authorRepository;
 
 import java.util.List;
@@ -26,16 +27,32 @@ public class authorService {
         return authorRepository.findById(id).orElse(null);
     }
 
-    public author createAuthor(author author) {
-        return authorRepository.save(author);
+    public author createAuthor(author newAuthor) {
+        // Asignar el autor a cada libro
+        if (newAuthor.getBooks() != null) {
+            for (book b : newAuthor.getBooks()) {
+                b.setAuthor(newAuthor); // Asignar el autor al libro
+            }
+        }
+        return authorRepository.save(newAuthor);
     }
 
-    public author updateAuthor(Long id, author author) {
-        if (authorRepository.existsById(id)) {
-            author.setId(id);
-            return authorRepository.save(author);
+    public author updateAuthor(Long id, author updatedAuthor) {
+        author existingAuthor = authorRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Autor no encontrado con ID: " + id));
+
+        existingAuthor.setName(updatedAuthor.getName());
+        existingAuthor.setNacionality(updatedAuthor.getNacionality());
+
+        // Actualizar la lista de libros
+        if (updatedAuthor.getBooks() != null) {
+            existingAuthor.getBooks().clear();
+            for (book b : updatedAuthor.getBooks()) {
+                b.setAuthor(existingAuthor); // Asignar el autor al libro
+                existingAuthor.getBooks().add(b);
+            }
         }
-        return null;
+
+        return authorRepository.save(existingAuthor);
     }
 
     public boolean deleteAuthor(Long id) {

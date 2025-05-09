@@ -13,6 +13,13 @@ import jakarta.persistence.Table;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
 @Table(name = "books")
 public class book {
@@ -28,7 +35,16 @@ public class book {
     /* ------------------ Un libro es escrito por un solo autor ----------------- */
     @ManyToOne // Unión de muchos a uno
     @JoinColumn(name = "author_id") // Unión de columnas con la FK de autor
+    @JsonIgnore // Ignoramos este campo
     private author author;
+
+    public Long getAuthorId() {
+        if (author == null) {
+            return null;
+        } else {
+            return author.getId();
+        }
+    }
 
     /* ------------------ Muchos libros son publicados por muchas editoriales --------------- */
     /* ------------------ Al ser una relación de muchos a muchos se crea una tabla nueva con las dos PK de la relación -------------- */
@@ -39,7 +55,7 @@ public class book {
     private List<publisher> publishers;
 
     /* ------------------ Un libro puede tener muchos préstamos --------------- */
-    @OneToMany(mappedBy = "book_id")
+    @OneToMany(mappedBy = "book")
     private List<loanBook> loans;
     
 
@@ -105,8 +121,4 @@ public class book {
     public void setAuthor(author author) {
         this.author = author;
     }
-
-
-
-    
 }

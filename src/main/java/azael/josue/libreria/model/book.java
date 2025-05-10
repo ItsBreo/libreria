@@ -10,15 +10,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Table(name = "books")
@@ -31,13 +23,12 @@ public class book {
     private String isbn;
     private int publishedYear;
 
-
     /* ------------------ Un libro es escrito por un solo autor ----------------- */
     @ManyToOne // Unión de muchos a uno
     @JoinColumn(name = "author_id") // Unión de columnas con la FK de autor
-    @JsonIgnore // Ignoramos este campo
     private author author;
 
+    // Getter para authorId
     public Long getAuthorId() {
         if (author == null) {
             return null;

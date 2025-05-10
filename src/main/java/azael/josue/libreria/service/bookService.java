@@ -1,6 +1,8 @@
 package azael.josue.libreria.service;
 
+import azael.josue.libreria.model.author;
 import azael.josue.libreria.model.book;
+import azael.josue.libreria.repository.authorRepository;
 import azael.josue.libreria.repository.bookRepository;
 
 import org.springframework.data.domain.Sort;
@@ -13,9 +15,11 @@ import java.util.List;
 public class bookService {
 
     private final bookRepository bookRepository;
+    private final authorRepository authorRepository;
 
-    public bookService(bookRepository bookRepository) {
+    public bookService(bookRepository bookRepository, authorRepository authorRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     public List<book> getAllBooks() {
@@ -27,8 +31,16 @@ public class bookService {
     }
 
     public book createBook(book book) {
+        if (book.getAuthor() != null && book.getAuthor().getId() != null) {
+            // Busca el autor por ID y lo asigna al libro
+            author author = authorRepository.findById(book.getAuthor().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Autor no encontrado con ID: " + book.getAuthor().getId()));
+            book.setAuthor(author);
+        } else {
+            throw new IllegalArgumentException("El autor es obligatorio para crear un libro.");
+        }
         return bookRepository.save(book);
-    }
+    }   
 
     public book updateBook(Long id, book book) {
         if (bookRepository.existsById(id)) {

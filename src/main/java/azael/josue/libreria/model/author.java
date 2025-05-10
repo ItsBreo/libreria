@@ -4,6 +4,7 @@ package azael.josue.libreria.model;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
@@ -32,6 +33,7 @@ public class author {
     /* ------------------ Un autor escribe muchos libros ----------------- */
     @OneToMany(mappedBy = "author",
     cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore // Evitamos la recursividad infinita
     private List<book> books;
 
     /* ------------------ Los autores dependen de las editoriales ----------------- */

@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
+import java.util.concurrent.Flow.Publisher;
 
 @Entity
 @Table(name = "books")
@@ -37,12 +38,10 @@ public class book {
         }
     }
 
-    /* ------------------ Muchos libros son publicados por muchas editoriales --------------- */
+    
     /* ------------------ Al ser una relación de muchos a muchos se crea una tabla nueva con las dos PK de la relación -------------- */
-    @ManyToMany
-    @JoinTable(name = "book_publisher",  // Nombre de la tabla
-    joinColumns = @JoinColumn(name = "book_id"), // Unión de columnas con id_libro
-    inverseJoinColumns = @JoinColumn(name = "publisher_id")) // Unión de columnas con id_publisher
+    // Relación ManyToMany con Publisher, bidireccional
+    @ManyToMany(mappedBy = "books")
     private List<publisher> publishers;
 
     /* ------------------ Un libro puede tener muchos préstamos --------------- */

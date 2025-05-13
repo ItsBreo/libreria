@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
@@ -21,10 +23,20 @@ public class publisher {
     private boolean isActive;
 
 
-    @ManyToMany(mappedBy = "publishers") // Relación de muchos a muchos con autores
-    private List<author> authors; 
-    
-    @ManyToMany(mappedBy = "publishers") // Relación de muchos a muchos con libros
+    @ManyToMany
+    @JoinTable(
+        name = "author_publisher",
+        joinColumns = @JoinColumn(name = "publisher_id"),
+        inverseJoinColumns = @JoinColumn(name = "author_id")
+    )
+    private List<author> authors;
+
+    @ManyToMany
+    @JoinTable(
+        name = "book_publisher",
+        joinColumns = @JoinColumn(name = "publisher_id"),
+        inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
     private List<book> books;
 
     // Constructor vacío para Springboot

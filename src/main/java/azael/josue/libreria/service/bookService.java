@@ -5,15 +5,19 @@ import azael.josue.libreria.model.book;
 import azael.josue.libreria.repository.authorRepository;
 import azael.josue.libreria.repository.bookRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class bookService {
 
+    @Autowired
     private final bookRepository bookRepository;
     private final authorRepository authorRepository;
 
@@ -58,35 +62,39 @@ public class bookService {
         return false;
     }
 
-    
-
     public List<book> searchBooks(String title, Integer year, String sortBy, String order) {
-        // Construirmos la especificación dinámica
-        Specification<book> spec = Specification.where(null);
+        List<book> books = bookRepository.findAll();
 
+        // Filtrar por título si se proporciona
         if (title != null && !title.isEmpty()) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + title.toLowerCase() + "%"));
+            books = books.stream()
+                .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
+                .collect(Collectors.toList());
         }
 
+        // Filtrar por año si se proporciona
         if (year != null) {
-            spec = spec.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.equal(root.get("publishedYear"), year));
+            books = books.stream()
+            .filter(book -> Integer.valueOf(book.getPublishedYear()).equals(year))
+            .collect(Collectors.toList());
         }
 
-        // Configuramos la ordenación
-        if (sortBy == null || (!sortBy.equals("publishedYear") && !sortBy.equals("title"))) {
-            sortBy = "id"; // Valor predeterminado
+        // Ordenar si se proporciona un campo de ordenación
+        if (sortBy != null && !sortBy.isEmpty()) {
+            Comparator<book> comparator = switch (sortBy) {
+                case "titulo" -> Comparator.comparing(book::getTitle);
+                case "anio" -> Comparator.comparing(book::getPublishedYear);
+                // Añade más casos según los campos por los que quieras permitir ordenar
+                default -> (b1, b2) -> 0; // No ordenar si el campo no es reconocido
+            };
+
+            if ("desc".equalsIgnoreCase(order)) {
+                comparator = comparator.reversed();
+            }
+
+            books.sort(comparator);
         }
 
-        Sort sort;
-        if (order != null && order.equalsIgnoreCase("desc")) {
-            sort = Sort.by(Sort.Direction.DESC, sortBy);
-        } else {
-            sort = Sort.by(Sort.Direction.ASC, sortBy);
-        }
-
-        // Ejecutamos la consulta
-        return bookRepository.findAll(spec, sort);
+        return books;
     }
 }

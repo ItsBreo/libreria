@@ -20,6 +20,12 @@ public class bookController {
         return bookService.getAllBooks();
     }
 
+    /**
+     * Retrieves a book by its ID.
+     *
+     * @param id The unique identifier of the book to retrieve.
+     * @return The book object corresponding to the given ID.
+     */
     @GetMapping("/{id}")
     public book getBookById(@PathVariable Long id) {
         return bookService.getBookById(id);
@@ -43,8 +49,8 @@ public class bookController {
     @GetMapping("/search")
     public List<book> searchBooks(
         @RequestParam(required = false) String title,
-        @RequestParam(required = false) Integer anio,
+        @RequestParam(required = false) Integer publishedYear,
         @RequestParam(required = false) String sortBy,
-        @RequestParam(required = false) String order)
-    { return bookService.searchBooks(title, anio, sortBy, order); }
+        @RequestParam(defaultValue = "asc") String order)
+    { return bookService.searchBooks(title, publishedYear, sortBy, order); }
 }
